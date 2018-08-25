@@ -1,0 +1,23 @@
+{
+  "name": "nodejs-learn-02",
+  "version": "0.0.1",
+  "description": "Learning of NodeJS by creating canvas game on Web Sockets",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Piponga/node-learning-02.git"
+  },
+  "keywords": [
+    "nodejs",
+    "learn"
+  ],
+  "author": "piponga",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/Piponga/node-learning-02/issues"
+  },
+  "homepage": "https://github.com/Piponga/node-learning-02#readme"
+}
