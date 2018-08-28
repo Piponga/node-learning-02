@@ -1,16 +1,16 @@
-const http = require('http');
+const express = require('express');
+
+const app = express();
+
 const port = 8080;
 
-const requestHandler = (req, res) => {
-    console.log(req.uri);
-    res.end('Simple HTTP Server response');
-};
+app.get('/', (req, res) => {
+    res.send('Express simple response');
+});
 
-const server = http.createServer(requestHandler);
-
-server.listen(port, (err) => {
-   if (err) {
-       return console.log('error', err);
-   }
+app.listen(port, (err) => {
+    if (err) {
+        return console.log('error in request', err);
+    }
     console.log(`server is listening on ${port}`);
 });
