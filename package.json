@@ -20,5 +20,8 @@
   "bugs": {
     "url": "https://github.com/Piponga/node-learning-02/issues"
   },
-  "homepage": "https://github.com/Piponga/node-learning-02#readme"
+  "homepage": "https://github.com/Piponga/node-learning-02#readme",
+  "dependencies": {
+    "express": "^4.16.3"
+  }
 }
