@@ -1,0 +1,18 @@
+doctype html
+html(lang="en")
+    head
+        meta(http-equiv="content-type" content="text/html; charset=UTF-8")
+        title= title
+        //link(rel='stylesheet', href='css/style.css')
+        style
+            include ../css/style.css
+        script(src='/code.jquery.com/jquery-3.3.1.min.js')
+    body
+        div.room
+            ul
+            form.form
+                input.form-control(autocomplete="off" autofocus placeholder="message..." disabled="false")
+
+        script(src='/socket.io/socket.io.js')
+        script
+            include chat.js
