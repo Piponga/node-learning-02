@@ -5,14 +5,14 @@ html(lang="en")
         title= title
         //link(rel='stylesheet', href='css/style.css')
         style
-            include ../css/style.css
-        script(src='/code.jquery.com/jquery-3.3.1.min.js')
+            include ./css/style.css
+        script(src='https://code.jquery.com/jquery-3.3.1.min.js')
     body
         div.room
             ul
             form.form
                 input.form-control(autocomplete="off" autofocus placeholder="message..." disabled="false")
 
-        script(src='/socket.io/socket.io.js')
+        script(src='https://cdnjs.cloudflare.com/ajax/libs/socket.io/2.1.1/socket.io.js')
         script
-            include chat.js
+            include js/chat.js

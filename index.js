@@ -5,7 +5,7 @@ const server = require('http').Server(app);
 // const io = require('socket.io')(server);
 
 app.set('view engine', 'pug');
-app.set('views','./app/routes');
+app.set('views','./app/resources');
 
 const port = config.port;
 
