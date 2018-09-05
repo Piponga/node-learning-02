@@ -53,7 +53,8 @@ schema.statics.authorize = function (username, password, callback) {
                 if (user.checkPassword(password)) {
                     callback(null, user);
                 } else {
-                    next(403);
+                    // next(403);
+                    console.log('403 error');
                 }
             } else {
                 const user = new User({username: username, password: password});

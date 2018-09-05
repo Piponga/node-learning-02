@@ -97,20 +97,30 @@ module.exports = function (server) {
     });
 
     io.on('sessreload', (sid) => {
+        const connected = io.of('').connected;
 
-        // console.log(111, io.sockets);
+        for(let key in connected) {
+            const socket = connected[key];
 
-        io.of('').clients((err, clients) => {
-            if (err) throw err;
-            console.log(888, sid, clients, io.sockets.sockets);
+            if (socket.request.session.id !== sid) return;
 
-            clients.forEach((client) => {
-                console.log(666, io.sockets[client]);
+            loadSession(sid, (err, session) => {
+                if (err) {
+                    socket.emit('error', 'server error');
+                    socket.disconnect();
+                    return;
+                }
+
+                if (!session) {
+                    socket.emit('logout');
+                    // socket.emit('error', 'handshake unauthorized');
+                    socket.disconnect();
+                    return;
+                }
+
+                socket.request.session = session;
             });
-        });
-
-
-
+        }
     });
 
     return io;

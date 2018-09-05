@@ -43,6 +43,10 @@ socket.on('leave', function (username) {
     appendUl(username + ' вышел из чата', 'gray');
 });
 
+socket.on('logout', function () {
+    window.location.href = '/';
+});
+
 
 socket.on('connect', function () {
     $('ul').empty();
