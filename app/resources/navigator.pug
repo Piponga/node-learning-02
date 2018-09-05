@@ -1,0 +1,9 @@
+nav.nav
+    div.nav-left
+        a(href='') Главная
+        //a(href='') Чат
+    div.nav-right
+        if user
+            a#a-logout(href='') Выйти
+        else
+            a#a-login(href='') Войти

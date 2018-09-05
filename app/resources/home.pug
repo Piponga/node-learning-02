@@ -1,18 +1,17 @@
-doctype html
-html(lang="en")
-    head
-        meta(http-equiv="content-type" content="text/html; charset=UTF-8")
-        title= title
-        //link(rel='stylesheet', href='css/style.css')
-        style
-            include ./css/style.css
-        script(src='https://code.jquery.com/jquery-3.3.1.min.js')
-    body
-        div.room
-            ul
-            form.form
-                input.form-control(autocomplete="off" autofocus placeholder="message..." disabled="false")
+extends layout
 
-        script(src='https://cdnjs.cloudflare.com/ajax/libs/socket.io/2.1.1/socket.io.js')
-        script
-            include js/chat.js
+block content
+
+    div.room
+        ul
+        form.form
+            input.form-control(autocomplete="off" autofocus placeholder="message..." disabled="false")
+
+    if user
+
+    else
+        include loginForm
+
+    //include navigator
+
+

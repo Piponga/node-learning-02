@@ -16,6 +16,8 @@ var appendUl = function (data, color) {
     if (liArr.length > LINES) {
         liArr[0].remove();
     }
+
+    ul.scrollTop($(document).height());
 };
 
 form.submit(function (e) {
@@ -26,13 +28,21 @@ form.submit(function (e) {
     if (message === '') return false;
 
     socket.emit('message', message, function (data) {
-        appendUl(data);
+        appendUl('я: ' + data);
     });
 });
 
-socket.on('message', function (data) {
-    appendUl(data);
+socket.on('message', function (username, data) {
+    appendUl(username + ': ' + data);
 });
+
+socket.on('join', function (username) {
+    appendUl(username + ' вошёл в чат', 'gray');
+});
+socket.on('leave', function (username) {
+    appendUl(username + ' вышел из чата', 'gray');
+});
+
 
 socket.on('connect', function () {
     $('ul').empty();
