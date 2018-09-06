@@ -1,0 +1,21 @@
+div.login-shade
+    div.login-cont-table
+        div.login-cont-cell
+            div.login-cont
+                h1= 'Регистрация и вход'
+                p= 'Введите имя пользователя и пароль. Если такого пользователя нет - он будет создан.'
+                br
+                form.login-form(name="login-form")
+                    div.form-group
+                        label.col-lg-2.control-label(for="input-username") Имя
+                        div.col-lg-10
+                            input.form-control#input-username(name="username" value="name" type="text" placeholder="Имя")
+                    div.form-group
+                        label.col-lg-2.control-label(for="input-password") Пароль
+                        div.col-lg-10
+                            input.form-control#input-password(name="password" value="pass" type="password" placeholder="Пароль")
+                    br
+                    div.form-group
+                        div.col-lg-offset-2.col-lg-10
+                            button.btn.btn-primary(type="submit" data-loading-text="Отправляю...") Войти
+                            span.help-block.error

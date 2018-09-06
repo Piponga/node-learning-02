@@ -1,0 +1,17 @@
+extends layout
+
+block content
+
+    div.room
+        ul
+        form.form
+            input.form-control(autocomplete="off" autofocus placeholder="message..." disabled="false")
+
+    if user
+
+    else
+        include loginForm
+
+    //include navigator
+
+

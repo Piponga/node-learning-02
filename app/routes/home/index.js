@@ -1,3 +1,5 @@
+const path = require('path');
+
 module.exports.get = function (req, res) {
-    res.send('GET successful');
+    res.render('home');
 };

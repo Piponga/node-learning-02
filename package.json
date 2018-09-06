@@ -22,7 +22,17 @@
   },
   "homepage": "https://github.com/Piponga/node-learning-02#readme",
   "dependencies": {
-    "express": "^4.16.3"
+    "async": "^2.6.1",
+    "connect": "^3.6.6",
+    "connect-mongo": "^2.0.1",
+    "cookie": "^0.3.1",
+    "cookie-parser": "^1.4.3",
+    "express": "^4.16.3",
+    "express-session": "^1.15.6",
+    "mongodb": "^3.1.4",
+    "mongoose": "^5.2.12",
+    "pug": "^2.0.3",
+    "socket.io": "^2.1.1"
   },
   "devDependencies": {
     "nodemon": "^1.18.3"
