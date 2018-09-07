@@ -6,6 +6,8 @@ const cookieParser = require('cookie-parser');
 const sessionStore = require('../lib/sessionStore');
 const User = require('../models/user').User;
 
+let canvasPaints = [];
+
 function loadSession(sid, callback) {
     sessionStore.load(sid, function (err, session) {
         if (arguments.length === 0) {
@@ -72,47 +74,11 @@ module.exports = function (server) {
     });
 
 
-    // io.use(function(socket, next) {
-    //     const handshake = socket.request;
-    //
-    //     async.waterfall([
-    //         function (callback) {
-    //             handshake.cookies = cookie.parse(handshake.headers.cookie || '');
-    //             const sidCookie = handshake.cookies[config.session.key];
-    //             const sid = cookieParser.signedCookie(sidCookie, config.session.secret);
-    //
-    //
-    //             loadSession(sid, callback);
-    //         },
-    //         function (session, callback) {
-    //             if (!session) {
-    //                 callback(401);
-    //             }
-    //
-    //             handshake.session = session;
-    //             loadUser(session, callback);
-    //         },
-    //         function (user, callback) {
-    //             if (!user) {
-    //                 callback(403);
-    //             }
-    //
-    //             handshake.user = user;
-    //             callback(null);
-    //         }
-    //     ], function (err) {
-    //         if (!err) {
-    //             console.log(222)
-    //             return next();
-    //         } else {
-    //             console.log(333)
-    //             // next(new Error('not authorized'));
-    //             return next(err);
-    //         }
-    //     });
-    // });
-
     io.on('connection', (socket) => {
+        io.of('').clients((error, clients) => {
+            if (error) throw error;
+            console.log(22, clients);
+        });
 
         const handshake = socket.request;
         if (!handshake.user) return false;
@@ -120,11 +86,26 @@ module.exports = function (server) {
         let username = '';
         username = handshake.user.username;
 
+        socket.emit('myconnect');
+
         socket.broadcast.emit('join', username);
 
         socket.on('message', (data, cb) => {
             socket.broadcast.emit('message', username, data);
             cb(data);
+        });
+
+        socket.on('canvas-get', () => {
+
+            socket.local.emit('canvas-get', canvasPaints);
+        });
+        socket.on('canvas-draw', data => {
+            canvasPaints.push(data);
+            socket.broadcast.emit('canvas-draw', data);
+        });
+        socket.on('canvas-clear', data => {
+            canvasPaints = [];
+            socket.broadcast.emit('canvas-clear', data);
         });
 
         socket.on('disconnect', () => {

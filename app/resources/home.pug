@@ -2,6 +2,20 @@ extends layout
 
 block content
 
+    div.canvas-cont
+        canvas#whiteboard
+        div.canvas-ui-cont
+            div.color(id="green" onclick="color(this)")
+            div.color(id="blue" onclick="color(this)")
+            div.color(id="red" onclick="color(this)")
+            div.color(id="yellow" onclick="color(this)")
+            div.color(id="orange" onclick="color(this)")
+            div.color(id="black" onclick="color(this)")
+            div.eraser-cont
+                div(style="position: relative; display: inline-block;") Eraser
+                div.color(style="background: white; border:2px solid;" id="white" onclick="color(this)")
+                input(type="button" value="clear" id="clr" size="23" onclick="erase(true)" style="position: relative; display: inline-block; height: 30px; padding: 0 10px;")
+
     div.room
         ul
         form.form

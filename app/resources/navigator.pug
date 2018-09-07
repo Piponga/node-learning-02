@@ -4,6 +4,7 @@ nav.nav
         //a(href='') Чат
     div.nav-right
         if user
+            span.nav-name= 'Привет, ' + user.username
             a#a-logout(href='') Выйти
         else
             a#a-login(href='') Войти
