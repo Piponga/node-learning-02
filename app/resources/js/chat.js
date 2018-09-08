@@ -3,6 +3,7 @@ var socket = io('', {
     'reconnectionDelay': 1000,
     'timeout': 10000
 });
+socket.isMyConnected = false;
 
 var LINES = 18;
 var ul = $('.room ul');
@@ -33,28 +34,33 @@ form.submit(function (e) {
 });
 
 socket.on('message', function (username, data) {
+    if (!socket.isMyConnected) return;
     appendUl(username + ': ' + data);
 });
 
 socket.on('join', function (username) {
+    if (!socket.isMyConnected) return;
     appendUl(username + ' вошёл в чат', 'gray');
 });
 socket.on('leave', function (username) {
+    if (!socket.isMyConnected) return;
     appendUl(username + ' вышел из чата', 'gray');
 });
 
 socket.on('logout', function () {
+    socket.isMyConnected = false;
     window.location.href = '/';
 });
 
-
-socket.on('connect', function () {
+socket.on('myconnect', function () {
+    socket.isMyConnected = true;
     $('ul').empty();
     appendUl('Соединение установлено', 'green');
     input.attr('disabled', false);
 });
 
 socket.on('disconnect', function () {
+    socket.isMyConnected = false;
     appendUl('Соединение потеряно', 'red');
     input.attr('disabled', true);
 });
