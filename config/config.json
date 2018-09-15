@@ -1,5 +1,5 @@
 {
-  "port": 3000,
+  "port": 5000,
   "mongoose": {
     "uri": "mongodb://localhost/chat",
     "options": {
@@ -15,5 +15,8 @@
       "httpOnly": true,
       "maxAge": null
     }
+  },
+  "web": {
+    "iframeSrc": "https://piponga.com/tmp/nodejs/roomwars/"
   }
 }

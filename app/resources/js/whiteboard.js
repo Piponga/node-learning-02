@@ -20,6 +20,8 @@ function init() {
     }
 
     canvas = document.getElementById('whiteboard');
+    if (!canvas) return;
+
     ctx = canvas.getContext("2d");
     w = canvas.width;
     h = canvas.height;
