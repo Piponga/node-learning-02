@@ -39,5 +39,5 @@ server.listen(port, (err) => {
     console.log(`server is listening on ${port}`);
 });
 
-// const io = require('./app/socket')(server);
-// app.set('io', io);
+const io = require('./app/socket')(server);
+app.set('io', io);
