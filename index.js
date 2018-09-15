@@ -4,7 +4,7 @@ const cookieParser = require('cookie-parser');
 const express = require('express');
 const app = express();
 const server = require('http').Server(app);
-// const io = require('socket.io')(server);
+
 
 app.set('view engine', 'pug');
 app.set('views', './app/resources');
@@ -13,21 +13,21 @@ app.set('views', './app/resources');
 app.use(express.static('app/resources'));
 app.use(express.json());
 app.use(express.urlencoded({extended: false}));
-app.use(cookieParser());
+// app.use(cookieParser());
 
-const session = require('express-session');
-const sessionStore = require('./app/lib/sessionStore');
-app.use(session({
-    secret: config.session.secret,
-    key: config.session.key,
-    cookie: config.session.cookie,
-    store: sessionStore,
-    proxy: true,
-    resave: true,
-    saveUninitialized: true
-}));
+// const session = require('express-session');
+// const sessionStore = require('./app/lib/sessionStore');
+// app.use(session({
+//     secret: config.session.secret,
+//     key: config.session.key,
+//     cookie: config.session.cookie,
+//     store: sessionStore,
+//     proxy: true,
+//     resave: true,
+//     saveUninitialized: true
+// }));
 
-app.use(require('./app/middleware/loadUser'));
+// app.use(require('./app/middleware/loadUser'));
 
 require('./app/routes')(app);
 
@@ -39,5 +39,5 @@ server.listen(port, (err) => {
     console.log(`server is listening on ${port}`);
 });
 
-const io = require('./app/socket')(server);
-app.set('io', io);
+// const io = require('./app/socket')(server);
+// app.set('io', io);
