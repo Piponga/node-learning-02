@@ -42,8 +42,9 @@ function loadUser(session, callback) {
 }
 
 module.exports = function (server) {
+    const origins = process.env.NODE_ENV !== 'production' ? 'localhost:*' : 'arcane-lowlands-79462.herokuapp.com:*';
     const io = require('socket.io')(server, {
-        origins: 'localhost:*'
+        origins: origins
     });
 
     // io.set('origins', 'localhost:*');
