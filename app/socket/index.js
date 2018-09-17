@@ -47,8 +47,6 @@ module.exports = function (server) {
         origins: origins
     });
 
-    // io.set('origins', 'localhost:*');
-
     io.use(function(socket, next) {
         const handshake = socket.request;
 
