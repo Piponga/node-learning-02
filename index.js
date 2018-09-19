@@ -4,7 +4,7 @@ const cookieParser = require('cookie-parser');
 const express = require('express');
 const app = express();
 const server = require('http').Server(app);
-// const io = require('socket.io')(server);
+
 
 app.set('view engine', 'pug');
 app.set('views', './app/resources');
@@ -31,7 +31,7 @@ app.use(require('./app/middleware/loadUser'));
 
 require('./app/routes')(app);
 
-const port = config.port;
+const port = process.env.PORT || config.port;
 server.listen(port, (err) => {
     if (err) {
         return console.log('error in request', err);

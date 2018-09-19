@@ -7,6 +7,9 @@ const sessionStore = require('../lib/sessionStore');
 const User = require('../models/user').User;
 
 let canvasPaints = [];
+let roomState = {
+    ships: {}
+};
 
 function loadSession(sid, callback) {
     sessionStore.load(sid, function (err, session) {
@@ -39,9 +42,10 @@ function loadUser(session, callback) {
 }
 
 module.exports = function (server) {
-    const io = require('socket.io')(server);
-
-    io.set('origins', 'localhost:*');
+    const origins = process.env.NODE_ENV !== 'production' ? 'localhost:*' : 'piponga.com:*';
+    const io = require('socket.io')(server, {
+        origins: origins
+    });
 
     io.use(function(socket, next) {
         const handshake = socket.request;
@@ -87,6 +91,7 @@ module.exports = function (server) {
         username = handshake.user.username;
 
         socket.emit('myconnect');
+        socket.emit('room-wars-connect', username);
 
         socket.broadcast.emit('join', username);
 
@@ -95,20 +100,48 @@ module.exports = function (server) {
             cb(data);
         });
 
-        socket.on('canvas-get', () => {
+/*        socket.on('canvas-get', () => {
 
-            socket.local.emit('canvas-get', canvasPaints);
+            // socket.local.emit('canvas-get', canvasPaints);
         });
         socket.on('canvas-draw', data => {
-            canvasPaints.push(data);
-            socket.broadcast.emit('canvas-draw', data);
+            console.log(data)
+            // canvasPaints.push(data);
+            // socket.broadcast.emit('canvas-draw', data);
         });
         socket.on('canvas-clear', data => {
             canvasPaints = [];
             socket.broadcast.emit('canvas-clear', data);
+        });*/
+
+        socket.on('ship-join', data => {
+            roomState.ships[data.user] = {};
+            roomState.ships[data.user].pos = data.pos;
+            roomState.ships[data.user].rot = data.rot;
+            socket.broadcast.emit('ship-join', data);
+        });
+        socket.on('ship-respawn', data => {
+            if (!roomState.ships.hasOwnProperty(data.user)) roomState.ships[data.user] = {};
+            roomState.ships[data.user].pos = data.pos;
+            roomState.ships[data.user].rot = data.rot;
+            socket.broadcast.emit('ship-respawn', data);
+        });
+        socket.on('room-get', () => {
+            socket.emit('room-get', roomState);
+        });
+        socket.on('ship-move', data => {
+            if (!roomState.ships.hasOwnProperty(username)) roomState.ships[username] = {};
+            if (data.pos) roomState.ships[username].pos = data.pos;
+            if (data.rot) roomState.ships[username].rot = data.rot;
+            socket.broadcast.emit('ship-move', username, data);
+        });
+        socket.on('ship-died', () => {
+            roomState.ships[username] = {};
+            socket.broadcast.emit('ship-died', username);
         });
 
         socket.on('disconnect', () => {
+            if (roomState.ships.hasOwnProperty(username)) delete roomState.ships[username];
             socket.broadcast.emit('leave', username);
         });
 

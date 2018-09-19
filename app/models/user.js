@@ -23,48 +23,100 @@ const schema = new Schema({
     }
 });
 
-schema.methods.encryptPassword = function (password) {
-    return crypto.createHmac('sha1', this.salt).update(password).digest('hex');
-};
+class UserClass {
 
-schema.virtual('password')
-    .set(function(password) {
+    set password(password) {
         this._plainPassword = password;
         this.salt = Math.random() + '';
         this.hashedPassword = this.encryptPassword(password);
-    })
-    .get(function() {
+    }
+
+    get password() {
         return this._plainPassword;
-    });
+    }
 
-schema.methods.checkPassword = function (password) {
-    return this.encryptPassword(password) === this.hashedPassword;
-};
+    encryptPassword(password) {
+        return crypto.createHmac('sha1', this.salt).update(password).digest('hex');
+    }
 
-schema.statics.authorize = function (username, password, callback) {
-    const User = this;
+    checkPassword(password) {
+        return this.encryptPassword(password) === this.hashedPassword;
+    }
 
-    async.waterfall([
-        function (callback) {
-            User.findOne({username: username}, callback);
-        },
-        function (user, callback) {
-            if (user) {
-                if (user.checkPassword(password)) {
-                    callback(null, user);
+    static authorize(username, password, callback) {
+        const User = this;
+
+        async.waterfall([
+            function (callback) {
+                User.findOne({username: username}, callback);
+            },
+            function (user, callback) {
+                if (user) {
+                    if (user.checkPassword(password)) {
+                        callback(null, user);
+                    } else {
+                        // next(403);
+                        console.log('403 error');
+                    }
                 } else {
-                    // next(403);
-                    console.log('403 error');
+                    const user = new User({username: username, password: password});
+                    user.save((err) => {
+                        if (err) throw err;
+                        callback(null, user);
+                    });
                 }
-            } else {
-                const user = new User({username: username, password: password});
-                user.save((err) => {
-                    if (err) throw err;
-                    callback(null, user);
-                });
             }
-        }
-    ], callback);
-};
+        ], callback);
+    }
+}
+
+
+schema.loadClass(UserClass);
+
+
+// schema.methods.encryptPassword = function (password) {
+//     return crypto.createHmac('sha1', this.salt).update(password).digest('hex');
+// };
+
+// schema.virtual('password')
+//     .set(function(password) {
+//         this._plainPassword = password;
+//         this.salt = Math.random() + '';
+//         this.hashedPassword = this.encryptPassword(password);
+//     })
+//     .get(function() {
+//         return this._plainPassword;
+//     });
+
+// schema.methods.checkPassword = function (password) {
+//     return this.encryptPassword(password) === this.hashedPassword;
+// };
+
+// schema.statics.authorize = function (username, password, callback) {
+//     const User = this;
+//
+//     async.waterfall([
+//         function (callback) {
+//             User.findOne({username: username}, callback);
+//         },
+//         function (user, callback) {
+//             if (user) {
+//                 if (user.checkPassword(password)) {
+//                     callback(null, user);
+//                 } else {
+//                     // next(403);
+//                     console.log('403 error');
+//                 }
+//             } else {
+//                 const user = new User({username: username, password: password});
+//                 user.save((err) => {
+//                     if (err) throw err;
+//                     callback(null, user);
+//                 });
+//             }
+//         }
+//     ], callback);
+// };
+
 
 exports.User = mongoose.model('User', schema);

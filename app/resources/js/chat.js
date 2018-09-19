@@ -11,7 +11,7 @@ var form = $('.form');
 var input = $('.form-control');
 
 var appendUl = function (data, color) {
-    $(ul).append('<li style="color: ' + (color !== undefined ? color : "black") + '">' + data + '</li>');
+    $(ul).append('<li style="color: ' + (color !== undefined ? color : "white") + '">' + data + '</li>');
 
     var liArr = $('li').get();
     if (liArr.length > LINES) {
