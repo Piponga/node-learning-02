@@ -21,13 +21,19 @@ app.use(session({
     secret: config.session.secret,
     key: config.session.key,
     cookie: config.session.cookie,
-    store: sessionStore,
+    // store: sessionStore,
     proxy: true,
     resave: true,
     saveUninitialized: true
 }));
 
 app.use(require('./app/middleware/loadUser'));
+
+app.use(function(req, res, next) {
+    res.header("Access-Control-Allow-Origin", "*");
+    res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
+    next();
+});
 
 require('./app/routes')(app);
 

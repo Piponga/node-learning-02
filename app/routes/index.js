@@ -2,7 +2,8 @@
 
 module.exports = function (app) {
 
-    app.get('/', require('./home').get);
+    app.get('/', require('./home/home').get);
+    app.post('/', require('./home/home').post);
 
     app.get('/login', require('./login/login').get);
     app.post('/login', require('./login/login').post);

@@ -6,6 +6,7 @@ const cookieParser = require('cookie-parser');
 const sessionStore = require('../lib/sessionStore');
 const User = require('../models/user').User;
 const Rnd = require('../lib/Rnd');
+const guestsUID = require('../middleware/guets').guestsUID;
 
 const canvasPaints = [];
 const rooms = {};
@@ -59,6 +60,7 @@ function checkRoomFullness(roomName) {
     console.log(444, rooms, rooms.hasOwnProperty(roomName) ? rooms[roomName].ships : '');
     console.log(555, availableRoomNamesSet);
     console.log(666, availableRoomNamesArr);
+    console.log(777, guestsUID);
 }
 
 function getRoomName() {
@@ -89,13 +91,10 @@ function getRoomName() {
 module.exports = function (server) {
     const origins = process.env.NODE_ENV !== 'production' ? 'localhost:*' : 'piponga.com:*';
     const io = require('socket.io')(server, {
-        origins: origins,
-        serveClient: false,
-        pingInterval: 10000,
-        pingTimeout: 5000
+        origins: origins
     });
 
-    io.use(function(socket, next) {
+/*    io.use(function(socket, next) {
         const handshake = socket.request;
 
         handshake.cookies = cookie.parse(handshake.headers.cookie || '');
@@ -123,34 +122,20 @@ module.exports = function (server) {
             socket.request.user = user;
             return next();
         });
-    });
-
-
+    });*/
 
     io.on('connection', (socket) => {
-        // io.of('').clients((error, clients) => {
-        //     if (error) throw error;
-        //     console.log(22, clients);
-        // });
-
-        const handshake = socket.request;
-        if (!handshake.user) return false;
-
-        let username = '';
-        username = handshake.user.username;
+        // const handshake = socket.request;
+        // if (!handshake.user) return false;
+        //
+        // let username = '';
+        // username = handshake.user.username;
+        let userUID = socket.handshake.query.token;
 
         socket.roomName = getRoomName();
 
         socket.join(socket.roomName, () => {
-            socket.emit('room-wars-connect', username);
-
-            if (io.of('/').adapter.rooms.hasOwnProperty(socket.roomName)) {
-                rooms[socket.roomName].clientsCount = io.of('/').adapter.rooms[socket.roomName].length;
-
-                checkRoomFullness(socket.roomName);
-            } else {
-                console.log('------------- room is not exist');
-            }
+            socket.emit('room-wars-connect', userUID);
         });
 
 /*        socket.emit('myconnect');
@@ -177,11 +162,19 @@ module.exports = function (server) {
         });*/
 
         socket.on('ship-join', data => {
-            let room = rooms[socket.roomName];
+            if (io.of('/').adapter.rooms.hasOwnProperty(socket.roomName)) {
+                let room = rooms[socket.roomName];
+                room.ships[data.user] = {};
+                room.ships[data.user].pos = data.pos;
+                room.ships[data.user].rot = data.rot;
 
-            room.ships[data.user] = {};
-            room.ships[data.user].pos = data.pos;
-            room.ships[data.user].rot = data.rot;
+                room.clientsCount = io.of('/').adapter.rooms[socket.roomName].length;
+
+                checkRoomFullness(socket.roomName);
+            } else {
+                console.log('------------- room is not exist');
+            }
+
             socket.broadcast.to(socket.roomName).emit('ship-join', data);
         });
 
@@ -194,20 +187,22 @@ module.exports = function (server) {
         socket.on('room-get', () => {
             socket.emit('room-get', rooms[socket.roomName]);
         });
-        // socket.on('ship-move', data => {
-        //     if (!roomState.ships.hasOwnProperty(username)) roomState.ships[username] = {};
-        //     if (data.pos) roomState.ships[username].pos = data.pos;
-        //     if (data.rot) roomState.ships[username].rot = data.rot;
-        //     socket.broadcast.emit('ship-move', username, data);
-        // });
+        socket.on('ship-move', data => {
+            let room = rooms[socket.roomName];
+            if (!room.ships.hasOwnProperty(userUID)) room.ships[userUID] = {};
+            if (data.pos) room.ships[userUID].pos = data.pos;
+            if (data.rot) room.ships[userUID].rot = data.rot;
+            socket.broadcast.to(socket.roomName).emit('ship-move', userUID, data);
+        });
         // socket.on('ship-died', () => {
         //     roomState.ships[username] = {};
         //     socket.broadcast.emit('ship-died', username);
         // });
 
         socket.on('disconnect', () => {
-            if (rooms[socket.roomName].ships.hasOwnProperty(username)) delete rooms[socket.roomName].ships[username];
-            socket.broadcast.to(socket.roomName).emit('ship-leave', username);
+            if (rooms[socket.roomName].ships.hasOwnProperty(userUID)) delete rooms[socket.roomName].ships[userUID];
+            socket.broadcast.to(socket.roomName).emit('ship-leave', userUID);
+            delete guestsUID[userUID];
 
             if (io.of('/').adapter.rooms.hasOwnProperty(socket.roomName)) {
                 rooms[socket.roomName].clientsCount = io.of('/').adapter.rooms[socket.roomName].length;
@@ -222,7 +217,7 @@ module.exports = function (server) {
 
         // check if the socket suddenly became offline
         socket.pingCounter = 0;
-        let pingPongTimer = setInterval(function () {
+        setInterval(function () {
             if (socket.pingCounter > 5) {
                 clearInterval(this);
                 setTimeout(() => socket.disconnect(true), 0);

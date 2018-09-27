@@ -167,3 +167,9 @@ body {
                 text-align: center;
                 background-color: #f3f3f3;
             }
+
+.btn-guest-primary {
+    padding: 6px 12px;
+    background-color: #affd7e;
+    margin: 8px;
+}
